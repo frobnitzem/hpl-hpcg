@@ -1,22 +1,21 @@
 ---
-title: "HPL"
+title: "BLAS"
 teaching: 10
 exercises: 20
 math: true
 
 questions:
-- "How do dense matrix algorithms divide work using MPI?"
-- "What are the key factors affecting their performance?"
-- "Why is peak performance a reasonable target for HPL?"
+- "What blas should I link with?"
+- "How can I get all these libraries installed and working together?"
+- "What are the limitations of blas and lapack?"
 
 objectives:
-- "Setup and run the HPL benchmark."
-- "Explain matrix tiling and scalapack layout."
+- "Understand the differences between blas implementations."
+- "Correctly compile, link, and test linear algebra libraries."
 
 keypoints:
-- "HPL requires tuning matrix and tile sizes to achieve peak performance."
-- "Weak scaling requires very large problem sizes for large supercomputers."
 - "Linking with vendor-optimized libraries is a pain in the neck."
+- "Standard BLAS/LAPACK doesn't use co-processors."
 ---
 
 The compilers, GPU, and network are working well.  Now it's time
@@ -122,9 +121,9 @@ many different implementations of BLAS available.
   called [blis](https://developer.amd.com/amd-aocl/blas-library/).
   Blis has a lapack implementation called libFLAME.
 
-* Co-processor accelerators (GPUs and Intel MIC cards) use
+* Co-processor accelerators (GPUs and Xeon Phi cards) use
   separate blas libraries.  For GPUs, these are cublas and rocblas.
-  For Intel MIC cards, the Intel BLAS will work but special
+  For Xeon Phi cards, the Intel MKL will work but special
   run-time setup is needed.
 
 * Cray systems provide BLAS and LAPACK through libsci.
@@ -149,6 +148,19 @@ with commands like `aptitude search blas`, and
 `aptitude show liblapack3`.
 On Redhat-based systems, use the corresponding
 `yum search` and `yum info`.
+
+## Blas Options
+
+Not only do different implementation exist, but there are different
+compilation options within the same BLAS package
+that can change its performance.  Here's a table explaining each
+variation:
+
+|  Option | Help | 
+|-------- | ---- |
+| ilp64   | This changes the integer sizes on things like matrix dimensions<br />and tile sizes to use 64-bit integers.<br />Many systems have 32-bit integers by default,<br />which limits the maximum size a matrix can grow to |
+| threads | pthreads and OpenMP are common ways to use multiple processor<br />cores for a single matrix operation. <br />With no threading, blas doesn't use threads.  Thus, only one<br />processor core will be used for each blas call.<br />That can be good if your code uses threads to make<br />multiple blas calls simultaneously.  If your code uses only<br />one thread, though, you will want to have blas use threads. | 
+| static/shared | Shared object linking reduces the size of your code, but costs a<br />tiny bit more for every call to BLAS, and introduces the potential for<br />missing libraries if you ever reinstall anything.<br />If your code makes millions of blas calls, you may want to try static linking. |
 
 
 ## Compile Your Own Blas/Lapack
@@ -213,48 +225,5 @@ launching the above using MPI.  It's also important
 to note that this program is not using the GPU.
 Thus, a much faster solve could have been achieved
 if cublas were being called instead of openblas.
-
-> ## Run HPL
->
-> Running HPL isn't all that different than the above.
-> Consult [advancedclustering](https://www.advancedclustering.com/act_kb/tune-hpl-dat-file) and the [HPL calculator](https://hpl-calculator.sourceforge.net/hpl-calculations.php) to create an input file for HPL and modify the processor
-> layout (p,q), block size (nb), and total number of blocks (n/nb and m/nb).
-> 
-> Next, create a node-file listing the nodes available to run,
-> and launch HPL with mpirun.
->
-> > ~~~
-> > export OMP_NUM_THREADS=4
-> > mpirun -nodefile nodes -np 16 hpl hpl.dat
-> > ~~~
-> > {: .language-bash}
-> {: .solution}
-{: .challenge}
-
-At this point, you've gone through the basics of installing
-mpi and blas, and testing both for local speed, and invoking
-HPL on-top of those libraries.
-
-However, there is still a lot of work left.
-We haven't covered using the GPU with HPL.
-To do that, you'll want to look for NVIDIA's
-optimized HPL code.
-
-In general, you will want to arrive at a tuned
-benchmark run by following these steps:
-
-1. Find the best MPI and CPU BLAS configuration by
-   compiling many different ways and testing with micro-benchmarks.
-2. Find the best block-size parameter (NB) for HPL
-   by running with P=Q=1 and N=8192 (single MPI rank).
-3. Find the best matrix size (N) using P=Q=1 (single MPI rank),
-   and keeping N a multiple of NB.  The total matrix memory
-   should fill about 80-95% of the memory available to each
-   MPI rank.
-4. Use all available processors, with one MPI rank per processor.
-   Try a range of P and Q values where P * Q = (total MPI ranks).
-5. Investigate hardware-specific methods for overclocking
-   while monitoring power consumption.
-6. Iterate by trying small changes and looking for performance gains.
 
 {% include links.md %}
