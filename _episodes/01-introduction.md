@@ -3,18 +3,18 @@ title: "Introduction"
 teaching: 10
 exercises: 10
 math: true
+
 questions:
 - "Why are HPL and HPCG used as benchmarks?"
-- "What are memory and compute-bound kernels?"
+- "What is a linear solve used for?"
+
 objectives:
 - "Explain dense and sparse matrices."
 - "List some applications that generate these types of problems."
-- "Understand bottlenecks to peak performance."
-- "Explain matrix tiling and scalapack layout."
+
 keypoints:
-- "Most applications are memory-bound, which complicates parallelization."
 - "Linear systems in both dense and sparse form are a universal theme in scientific computing."
-- "Getting good performance from parallel solvers is hard."
+- "Dense and sparse matrices have different optimal algorithms."
 ---
 
 High-Performance Linpack (HPL) and High-Performance Conjugate-Gradient (HPCG)
@@ -92,10 +92,35 @@ in the final solution to iteratively adjust $x$ by computing
 $A\tilde x - b$ ($\tilde x$ is an estimate of $x$).
 Thus, the HPCG benchmark focuses on this communicate and multiply rows strategy.
 
+Applying the $A$ operator to the right-hand side, $\tilde x$
+is done by a sparse matrix multiplication.
+Since each row has a constant number of non-zero elements,
+that sparse multiplication takes $O(N)$ work
+instead of $O(N^2)$ for a dense matrix.
+In a "perfect" parallel machine with $P$ processors,
+the multiplication can be done in $O(N/P)$ time.
+
+However, the cost of using an iterative method is that
+the number of iterations needed to obtain convergence
+to machine precision is unknown.  The convergence
+of conjugate gradients has been extensively studied,
+with the result that the number of iterations is
+somewhere between $O(\sqrt \kappa)$ and $O(N)$,
+with some algorithms guaranteeing less then $O(\sqrt \kappa)$
+iterations.  Here, $\kappa$ is the condition number
+of the matrix, equal to the ratio of the largest to smallest
+matrix eigenvalue.  There is theoretical evidence that
+(for matrices with Gaussian random elements)
+the condition number is proportional to the matrix dimension, $N$.
+This means in practice that the number of iterations required for convergence
+is on the order of $\sqrt N$, and that conjugate gradients on a
+"perfect" parallel machine scales as $O(N^{3/2} / P)$.
+
+
 ## HPL and Dense Matrices
 
 Dense matrices, on the other hand, are matrices in which $O(N^2)$ elements
-are nonzero.  In this case, full communication would be needed to multiply
+are nonzero.  In this case, much more communication would be needed to multiply
 $Ax$.  Rather than use conjugate gradients, dense matrix solves are more
 effectively accomplished by performing row-operations on the matrix, $A$.
 
@@ -109,7 +134,22 @@ $N$ ones.  The complete process is summarized as,
 
 $ A = P L U $
 
-where all matrices are $N \times N$.  This is called a "factorization"
-of $A$ into an "L-U" decomposition.
+where all matrices are $N \times N$.
+This is called a "factorization" of $A$ into an "L-U" decomposition.
+The computational work required for L-U decomposition is $O(N^3)$.
+
+Given the factorization, $A x = b$ can be solved by step-wise
+solution:
+
+$ x = (PLU)^-1 b = U^{-1} (L^{-1} (P^{-1} b)) $
+
+Permutation is just a communication step.
+Each of the next two multiplications take
+just about the same amount of work as a
+matrix-multiplication, $O(N^3)$.
+
+On a "perfect" parallel machine with $P$ processors,
+this should take $O(N^3/P)$ time.
+
 
 {% include links.md %}
