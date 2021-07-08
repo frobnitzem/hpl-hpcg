@@ -184,6 +184,7 @@ and `spack info hpl`.
 > Then, instruct spack to use those two as dependencies
 > when installing HPL.
 >
+> > ## Solution
 > > ~~~
 > > cd $HOME
 > > git clone --depth=1 https://github.com/spack/spack.git
@@ -211,6 +212,7 @@ rather than let spack handle it.
 > The key idea is to provide the directory containing lapack
 > to the compiler during linking.
 >
+> > ## Solution
 > > ~~~
 > > BLAS=$(spack find --format '{prefix}' openblas)
 > > g++ -o solve solve.cc -L$BLAS/lib -lopenblas

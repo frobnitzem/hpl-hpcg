@@ -60,6 +60,7 @@ can leverage vectorization and economies of scale.
 > Next, create a node-file listing the nodes available to run,
 > and launch HPL with mpirun.
 >
+> > ## Solution
 > > ~~~
 > > export OMP_NUM_THREADS=4
 > > mpirun -nodefile nodes -np 16 hpl hpl.dat
