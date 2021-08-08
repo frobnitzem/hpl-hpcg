@@ -37,6 +37,14 @@ Key summary information is contained in the sections
 marked `Performance Summary`, which include run-time,
 bandwidth (GB/s), and compute throughput (GFLOP/s).
 
+## HPCG Input File
+
+The HPCG input file, `hpcg.dat` is comparatively simple.
+The two lines provide problem size (3D) and run-time (seconds).
+The run-time is approximate, and running longer usually
+provides higher performance because slow steps during
+startup contribute less to the average.
+
 The configuration file sets problem size as number of points
 along x, y, and z-dimensions.  The memory requirement for HPCG
 should scale proportionately to their product, `nx*ny*nz`.
@@ -45,5 +53,32 @@ The second line contains the approximate target run-time in seconds.
 For your final reported HPCG time, your output file will need
 to report that the memory used was at least 25% of the system's total
 memory and the run-time was at least 1800 seconds.
+
+## NUMA
+
+[Non-uniform memory access](https://software.intel.com/content/www/us/en/develop/articles/optimizing-applications-for-numa.html)
+is an architecture for cpu/memory
+connection used in modern compute platforms.  It uses
+"fast" connections between CPUs and associated memory regions.
+In order to achieve peak performance, MPI ranks and processing threads
+should be assigned to processors consistently (this assignment
+is called process and thread affinity).
+This is necessary because the Linux kernel, by default,
+moves processes between CPUs to achieve load balance.
+
+When using a batch job scheduler like SLURM,
+the scheduler is able to call the `hwloc` library
+and use flags to `srun` in order to setup processor
+binding for every MPI rank.
+
+On a simple cluster without SLURM, you can launch jobs
+directly using mpirun, which can use ssh and a host-file.
+Some versions of mpirun, like openmpi, help when deailing with thread affinity.
+If you decide to tinker with calling numactl directly,
+you can replace `mpirun xhpl` with `mpirun xhpl.sh`,
+and write a script, `xhpl.sh` to setup environment
+variables and numa options.  Some useful guides are here:
+http://www.hpc.acad.bg/numactl/, https://glennklockwood.com/hpc-howtos/process-affinity.html.
+
 
 {% include links.md %}
