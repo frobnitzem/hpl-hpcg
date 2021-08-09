@@ -14,7 +14,8 @@ servers on Chameleon Cloud from the command-line.
 There are no scripts to tear-down your instances.  Instead,
 this can be done on the web-UI:
 https://chi.tacc.chameleoncloud.org/project/instances/
-
+Don't forget to also delete your leases under the
+"reservations" tab.
 
 It relies on setting up the environment as follows:
 
