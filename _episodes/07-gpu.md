@@ -5,7 +5,7 @@ exercises: 0
 math: true
 
 questions:
-- "What modifications to a the benchmarks are required to utilize GPUs?"
+- "What modifications to the benchmarks are required to utilize GPUs?"
 
 objectives:
 - "Demonstrate methods for using GPUs with HPL and HPCG."

@@ -37,6 +37,27 @@ Key summary information is contained in the sections
 marked `Performance Summary`, which include run-time,
 bandwidth (GB/s), and compute throughput (GFLOP/s).
 
+
+## What Happened?
+
+The HPCG input file doesn't say a lot about the underlying
+algorithm, but what's happening underneath are a series
+of computational tasks that are memory-bound.
+
+Memory-bound tasks are things like "scale a vector by 4"
+or "add two vectors."  These require relatively
+little computation, but much more data-movement.
+
+When solving a sparse linear system, matrix-vector
+multiplications can be computed with the help
+of just a few elements from neighboring processors.
+The conjugate gradient algorithm is just a series
+of matrix multiplies and dot products that bring
+the answer closer to the solution.  Thus,
+the timings for the overall solve are
+reflecting this memory bottleneck happening at each step.
+
+
 ## HPCG Input File
 
 The HPCG input file, `hpcg.dat` is comparatively simple.
