@@ -1,6 +1,6 @@
 ---
 title: "Scripting OpenStack"
-teaching: 10
+teaching: 5
 exercises: 20
 math: true
 
@@ -12,8 +12,7 @@ For reference, here is a set of scripts useful for spinning up
 servers on Chameleon Cloud from the command-line.
 
 There are no scripts to tear-down your instances.  Instead,
-this can be done on the web-UI:
-https://chi.tacc.chameleoncloud.org/project/instances/
+this can be done on the [web-UI](https://chi.tacc.chameleoncloud.org/project/instances/)
 Don't forget to also delete your leases under the
 "reservations" tab.
 
@@ -48,8 +47,8 @@ some of the setup tasks coming up.
 ### Side-track, exploring single-node setup
 
 1. follow the OSE MPI Benchmarks Guide:
-    - https://ulhpc-tutorials.readthedocs.io/en/latest/parallel/mpi/OSU_MicroBenchmarks/
-    - http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-5.7.1.tgz
+    - [OSU MicroBenchmarks](https://ulhpc-tutorials.readthedocs.io/en/latest/parallel/mpi/OSU_MicroBenchmarks)
+    - [download](https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-5.7.1.tgz)
 
     ```
     $ mpirun -n 48 ~/inst/libexec/osu-micro-benchmarks/mpi/collective/osu_gather
@@ -106,7 +105,7 @@ some of the setup tasks coming up.
     ```
 
 2. follow the HP Linpack guide:
-    - http://www.netlib.org/benchmark/hpl/hpl-2.3.tar.gz
+    - [Download HPL](https://www.netlib.org/benchmark/hpl/hpl-2.3.tar.gz)
 
 3. give up and use spack
     spack install gcc@11.1.0
@@ -137,7 +136,7 @@ some of the setup tasks coming up.
     ================================================================================
     ```
 
-5. Next, try https://www.hpcg-benchmark.org/.
+5. Next, try [www.hpcg-benchmark.org](https://www.hpcg-benchmark.org/).
 
 6. IMPORTANT: create an password-less ssh key and add it to your allowed-hosts file
 

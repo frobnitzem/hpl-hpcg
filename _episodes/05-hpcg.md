@@ -1,7 +1,7 @@
 ---
 title: "HPCG"
-teaching: 10
-exercises: 20
+teaching: 8
+exercises: 10
 math: true
 
 questions:

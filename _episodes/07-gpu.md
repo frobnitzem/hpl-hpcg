@@ -1,7 +1,7 @@
 ---
 title: "Using GPUs"
-teaching: 10
-exercises: 0
+teaching: 2
+exercises: 25
 math: true
 
 questions:

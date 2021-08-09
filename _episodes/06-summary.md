@@ -1,6 +1,6 @@
 ---
 title: "Summary"
-teaching: 10
+teaching: 14
 exercises: 0
 math: true
 

@@ -1,7 +1,7 @@
 ---
 title: "Introduction"
 teaching: 10
-exercises: 10
+exercises: 0
 math: true
 
 questions:
